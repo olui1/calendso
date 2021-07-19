@@ -92,7 +92,7 @@ export default function Settings(props) {
   return (
     <Shell heading="Profile">
       <Head>
-        <title>Profile | Calendso</title>
+        <title>Profile | Heralds</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <SettingsShell>
@@ -205,9 +205,9 @@ export default function Settings(props) {
                     </div>
                   </div>
                 </div>
-                <div>
-                  <div className="relative flex items-start">
-                    <div className="flex items-center h-5">
+                {/* <div> */}
+                  {/* <div className="relative flex items-start"> */}
+                    {/* <div className="flex items-center h-5">
                       <input
                         id="hide-branding"
                         name="hide-branding"
@@ -216,15 +216,15 @@ export default function Settings(props) {
                         defaultChecked={props.user.hideBranding}
                         className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                       />
-                    </div>
-                    <div className="ml-3 text-sm">
+                    </div> */}
+                    {/* <div className="ml-3 text-sm">
                       <label htmlFor="hide-branding" className="font-medium text-gray-700">
                         Disable Calendso branding
                       </label>
                       <p className="text-gray-500">Hide all Calendso branding from your public pages.</p>
-                    </div>
-                  </div>
-                </div>
+                    </div> */}
+                  {/* </div> */}
+                {/* </div> */}
               </div>
 
               <div className="mt-6 flex-grow lg:mt-0 lg:ml-6 lg:flex-grow-0 lg:flex-shrink-0">

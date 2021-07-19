@@ -29,7 +29,7 @@ export default function Type(props) {
             <Head>
                 <title>
                     Cancelled {props.title} | {props.user.name || props.user.username} |
-                    Calendso
+                    Heralds
                 </title>
                 <link rel="icon" href="/favicon.ico"/>
             </Head>

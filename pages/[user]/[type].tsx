@@ -76,16 +76,16 @@ export default function Type(props): Type {
         <Head>
           <title>
             {rescheduleUid && "Reschedule"} {props.eventType.title} | {props.user.name || props.user.username}{" "}
-            | Calendso
+            | Heralds
           </title>
-          <meta name="title" content={"Meet " + (props.user.name || props.user.username) + " via Calendso"} />
+          <meta name="title" content={"Meet " + (props.user.name || props.user.username) + " via Heralds"} />
           <meta name="description" content={props.eventType.description} />
 
           <meta property="og:type" content="website" />
-          <meta property="og:url" content="https://calendso/" />
+          <meta property="og:url" content="https://heralds.io/" />
           <meta
             property="og:title"
-            content={"Meet " + (props.user.name || props.user.username) + " via Calendso"}
+            content={"Meet " + (props.user.name || props.user.username) + " via Heralds"}
           />
           <meta property="og:description" content={props.eventType.description} />
           <meta
@@ -101,10 +101,10 @@ export default function Type(props): Type {
           />
 
           <meta property="twitter:card" content="summary_large_image" />
-          <meta property="twitter:url" content="https://calendso/" />
+          <meta property="twitter:url" content="https://heralds.io" />
           <meta
             property="twitter:title"
-            content={"Meet " + (props.user.name || props.user.username) + " via Calendso"}
+            content={"Meet " + (props.user.name || props.user.username) + " via Heralds"}
           />
           <meta property="twitter:description" content={props.eventType.description} />
           <meta

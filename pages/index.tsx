@@ -25,9 +25,9 @@ export default function Home(props) {
     }
 
     const stats = [
-        { name: 'Event Types', stat: props.eventTypeCount },
-        { name: 'Integrations', stat: props.integrationCount },
-        { name: 'Available Hours', stat: Math.round(((props.user.endTime - props.user.startTime) / 60) * 100) / 100 + ' hours' },
+        { name: 'Event Types', stat: <a href="/availability"> {props.eventTypeCount} </a> },
+        { name: 'Integrations', stat: <a href="/integrations"> {props.integrationCount} </a> },
+        { name: 'Available Hours', stat: <a href="/availability">{Math.round(((props.user.endTime - props.user.startTime) / 60) * 100) / 100} hr</a>},
     ];
 
     let timeline = [];
@@ -66,7 +66,7 @@ export default function Home(props) {
     return (
       <div>
         <Head>
-          <title>Calendso</title>
+          <title>Heralds</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
@@ -141,7 +141,7 @@ export default function Home(props) {
                   <div className="md:w-1/2 self-center mb-8 md:mb-0">
                     <h2 className="text-2xl dark:text-white font-semibold">Getting started</h2>
                     <p className="text-gray-600 dark:text-gray-200 text-sm">
-                      Steps you should take to get started with Calendso.
+                      Steps you should take to get started with Heralds.
                     </p>
                   </div>
                   <div className="md:w-1/2">

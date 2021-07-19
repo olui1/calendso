@@ -62,7 +62,7 @@ export default function Success(props) {
     isReady && (
       <div>
         <Head>
-          <title>Booking Confirmed | {eventName} | Calendso</title>
+          <title>Booking Confirmed | {eventName} | Heralds</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <main className="max-w-3xl mx-auto my-24">
@@ -202,7 +202,7 @@ export default function Success(props) {
                   </div>
                   {!props.user.hideBranding && (
                     <div className="mt-4 pt-4 border-t dark:border-gray-900  text-gray-400 text-center text-xs dark:text-white">
-                      <a href="https://checkout.calendso.com">Create your own booking link with Calendso</a>
+                      <a href="https://heralds.io">Delegate everything with the help of Heralds</a>
                     </div>
                   )}
                 </div>

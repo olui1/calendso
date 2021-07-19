@@ -47,7 +47,7 @@ export default function Troubleshoot({ user }) {
   return (
     <div>
       <Head>
-        <title>Troubleshoot | Calendso</title>
+        <title>Troubleshoot | Heralds</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Shell heading="Troubleshoot">

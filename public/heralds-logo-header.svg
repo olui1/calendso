@@ -1,0 +1,29 @@
+<svg width="235px" height="72px" viewBox="0 0 235 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>heralds-full-logo</title>
+    <defs>
+        <linearGradient x1="-6.28976579%" y1="59.5030917%" x2="85.6337151%" y2="36.8177118%" id="linearGradient-1">
+            <stop stop-color="#FFEA9B" offset="0%"></stop>
+            <stop stop-color="#FFCA62" offset="100%"></stop>
+        </linearGradient>
+        <path d="M0,72 L0,16.0481551 L75,0 L65.1463237,14.0821511 L8.52258612,24.8243306 C8.05059403,24.913873 7.70897328,25.3263964 7.70897328,25.806807 L7.70897328,27.3661667 C7.70897328,27.9184514 8.15668853,28.3661667 8.70897328,28.3661667 C8.77360167,28.3661667 8.83807786,28.3599015 8.9014972,28.347459 L63.8505238,17.5667751 L63.8505238,17.5667751 L57.1353608,27.4433549 L8.51256833,37.1828086 C8.04528026,37.2764094 7.70897328,37.6867612 7.70897328,38.1633315 L7.70897328,39.5221645 C7.70897328,40.0744493 8.15668853,40.5221645 8.70897328,40.5221645 C8.77588279,40.5221645 8.84262338,40.5154493 8.90819169,40.5021196 L55.2756842,31.0759142 L55.2756842,31.0759142 L50.0176323,39.6486109 L8.50947146,48.0994477 C8.04364491,48.1942875 7.70897328,48.6039622 7.70897328,49.0793452 L7.70897328,50.5948801 C7.70897328,51.1471648 8.15668853,51.5948801 8.70897328,51.5948801 C8.7784418,51.5948801 8.84772123,51.5876413 8.91568929,51.573281 L48.861845,43.1334796 L48.861845,43.1334796 L44.0541303,51.3959808 L14.165477,59.1920065 C13.8762359,59.2674509 13.6359114,59.4683316 13.5103572,59.7396034 L11.198734,64.7340836 C9.61891286,68.1474362 6.52263174,70.6164766 2.84326601,71.3969114 L0,72 L0,72 Z" id="path-2"></path>
+        <linearGradient x1="60.9111305%" y1="35.6169111%" x2="44.6605013%" y2="41.1876532%" id="linearGradient-4">
+            <stop stop-color="#FFFFCC" stop-opacity="0.431790865" offset="0%"></stop>
+            <stop stop-color="#FFFFDF" stop-opacity="0.590635927" offset="52.3109703%"></stop>
+            <stop stop-color="#FFFFD1" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="heralds-full-logo" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-Copy-11">
+            <g id="Path-2-Copy-35">
+                <mask id="mask-3" fill="white">
+                    <use xlink:href="#path-2"></use>
+                </mask>
+                <use id="Mask" fill="url(#linearGradient-1)" xlink:href="#path-2"></use>
+                <polygon id="Path-4" fill="url(#linearGradient-4)" mask="url(#mask-3)" points="-3 70.8357477 20.2573173 0 44 0 16.10713 92"></polygon>
+            </g>
+            <text id="Heralds" font-family="CircularStd-Bold, Circular Std" font-size="40" font-weight="bold" letter-spacing="3.05882353" fill="#4A4A4A">
+                <tspan x="75" y="50">Heralds</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

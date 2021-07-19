@@ -30,9 +30,6 @@ export default function SettingsShell(props) {
                                     <ActiveLink href="/settings/password">
                                         <a><KeyIcon /> Password</a>
                                     </ActiveLink>
-                                    <ActiveLink href="/settings/embed">
-                                        <a><CodeIcon /> Embed</a>
-                                    </ActiveLink>
                                     <ActiveLink href="/settings/teams">
                                         <a><UserGroupIcon /> Teams</a>
                                     </ActiveLink>

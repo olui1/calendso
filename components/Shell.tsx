@@ -45,7 +45,7 @@ export default function Shell(props) {
                   <div className="flex-shrink-0">
                     <Link href="/">
                       <a>
-                        <img className="h-6" src="/calendso-white.svg" alt="Calendso" />
+                        <img className="h-6" src="/heralds-logo-header.svg" alt="Heralds" />
                       </a>
                     </Link>
                   </div>

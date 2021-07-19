@@ -147,7 +147,7 @@ export default function Book(props: any): JSX.Element {
         <Head>
           <title>
             {rescheduleUid ? "Reschedule" : "Confirm"} your {props.eventType.title} with{" "}
-            {props.user.name || props.user.username} | Calendso
+            {props.user.name || props.user.username} | Heralds
           </title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
