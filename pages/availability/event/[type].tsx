@@ -66,6 +66,8 @@ type EventTypeInput = {
   periodStartDate?: Date | string;
   periodEndDate?: Date | string;
   periodCountCalendarDays?: boolean;
+  requiresConfirmation: boolean;
+  minimumBookingNotice: number;
 };
 
 const PERIOD_TYPES = [
@@ -91,7 +93,6 @@ export default function EventTypePage({
 }: Props): JSX.Element {
   const router = useRouter();
 
-  console.log(eventType);
   const inputOptions: OptionBase[] = [
     { value: EventTypeCustomInputType.Text, label: "Text" },
     { value: EventTypeCustomInputType.TextLong, label: "Multiline Text" },
@@ -172,6 +173,8 @@ export default function EventTypePage({
   const descriptionRef = useRef<HTMLTextAreaElement>();
   const lengthRef = useRef<HTMLInputElement>();
   const isHiddenRef = useRef<HTMLInputElement>();
+  const requiresConfirmationRef = useRef<HTMLInputElement>();
+  const minimumBookingNoticeRef = useRef<HTMLInputElement>();
   const eventNameRef = useRef<HTMLInputElement>();
   const periodDaysRef = useRef<HTMLInputElement>();
   const periodDaysTypeRef = useRef<HTMLSelectElement>();
@@ -188,6 +191,8 @@ export default function EventTypePage({
     const enteredDescription: string = descriptionRef.current.value;
     const enteredLength: number = parseInt(lengthRef.current.value);
     const enteredIsHidden: boolean = isHiddenRef.current.checked;
+    const enteredMinimumBookingNotice: number = parseInt(minimumBookingNoticeRef.current.value);
+    const enteredRequiresConfirmation: boolean = requiresConfirmationRef.current.checked;
     const enteredEventName: string = eventNameRef.current.value;
 
     const type = periodType.type;
@@ -197,14 +202,6 @@ export default function EventTypePage({
     const enteredPeriodStartDate = periodStartDate ? periodStartDate.toDate() : null;
     const enteredPeriodEndDate = periodEndDate ? periodEndDate.toDate() : null;
 
-    console.log("values", {
-      type,
-      periodDaysTypeRef,
-      enteredPeriodDays,
-      enteredPeriodDaysType,
-      enteredPeriodStartDate,
-      enteredPeriodEndDate,
-    });
     // TODO: Add validation
 
     const payload: EventTypeInput = {
@@ -223,6 +220,8 @@ export default function EventTypePage({
       periodStartDate: enteredPeriodStartDate,
       periodEndDate: enteredPeriodEndDate,
       periodCountCalendarDays: enteredPeriodDaysType,
+      minimumBookingNotice: enteredMinimumBookingNotice,
+      requiresConfirmation: enteredRequiresConfirmation,
     };
 
     if (enteredAvailability) {
@@ -641,9 +640,51 @@ export default function EventTypePage({
                       </div>
                     </div>
                   </div>
+                  <div className="my-8">
+                    <div className="relative flex items-start">
+                      <div className="flex items-center h-5">
+                        <input
+                          ref={requiresConfirmationRef}
+                          id="requiresConfirmation"
+                          name="requiresConfirmation"
+                          type="checkbox"
+                          className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
+                          defaultChecked={eventType.requiresConfirmation}
+                        />
+                      </div>
+                      <div className="ml-3 text-sm">
+                        <label htmlFor="requiresConfirmation" className="font-medium text-gray-700">
+                          Booking requires manual confirmation
+                        </label>
+                        <p className="text-gray-500">
+                          The booking needs to be confirmed, before it is pushed to the integrations and a
+                          confirmation mail is sent.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
 
                   <fieldset className="my-8">
                     <Text variant="largetitle">When can people book this event?</Text>
+                    <div className="my-4">
+                      <label htmlFor="minimumAdvance" className="block text-sm font-medium text-gray-700">
+                        Minimum booking notice
+                      </label>
+                      <div className="mt-1 relative rounded-md shadow-sm">
+                        <input
+                          ref={minimumBookingNoticeRef}
+                          type="number"
+                          name="minimumAdvance"
+                          id="minimumAdvance"
+                          required
+                          className="focus:ring-blue-500 focus:border-blue-500 block w-full pr-20 sm:text-sm border-gray-300 rounded-md"
+                          defaultValue={eventType.minimumBookingNotice}
+                        />
+                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 text-sm">
+                          minutes
+                        </div>
+                      </div>
+                    </div>
                     <hr className="my-8" />
                     <section className="space-y-12">
                       <div className="mb-4">
@@ -991,6 +1032,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ req, query
       periodStartDate: true,
       periodEndDate: true,
       periodCountCalendarDays: true,
+      requiresConfirmation: true,
+      minimumBookingNotice: true,
     },
   });
 

@@ -12,10 +12,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method == "PATCH" || req.method == "POST") {
     const data = {
       title: req.body.title,
-      slug: req.body.slug,
+      slug: req.body.slug.trim(),
       description: req.body.description,
       length: parseInt(req.body.length),
       hidden: req.body.hidden,
+      requiresConfirmation: req.body.requiresConfirmation,
       locations: req.body.locations,
       eventName: req.body.eventName,
       customInputs: !req.body.customInputs
@@ -54,6 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       periodStartDate: req.body.periodStartDate,
       periodEndDate: req.body.periodEndDate,
       periodCountCalendarDays: req.body.periodCountCalendarDays,
+      minimumBookingNotice: req.body.minimumBookingNotice,
     };
 
     if (req.method == "POST") {
