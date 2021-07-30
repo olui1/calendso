@@ -7,7 +7,6 @@ frontend:
     build:
       commands:
         - yarn run build
-        - GOOGLE_API_CREDENTIALS=${GOOGLE_API_CREDENTIALS}
         - EMAIL_FROM=${EMAIL_FROM}
         - DATABASE_URL=${DATABASE_URL}
         - NEXT_PUBLIC_TELEMETRY_KEY=${NEXT_PUBLIC_TELEMETRY_KEY}
