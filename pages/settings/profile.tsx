@@ -58,7 +58,7 @@ export default function Settings(props) {
     const enteredAvatar = avatarRef.current.value;
     const enteredTimeZone = selectedTimeZone.value;
     const enteredWeekStartDay = selectedWeekStartDay.value;
-    const enteredHideBranding = hideBrandingRef.current.checked;
+    // const enteredHideBranding = hideBrandingRef.current.checked;
 
     // TODO: Add validation
 
@@ -71,7 +71,7 @@ export default function Settings(props) {
         avatar: enteredAvatar,
         timeZone: enteredTimeZone,
         weekStart: enteredWeekStartDay,
-        hideBranding: enteredHideBranding,
+        // hideBranding: enteredHideBranding,
         theme: selectedTheme ? selectedTheme.value : null,
       }),
       headers: {
