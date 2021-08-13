@@ -19,6 +19,13 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { Availability, EventType, User } from "@prisma/client";
 import { validJson } from "@lib/jsonUtils";
+import Text from "@components/ui/Text";
+import { RadioGroup } from "@headlessui/react";
+import classnames from "classnames";
+import throttle from "lodash.throttle";
+import "react-dates/initialize";
+import "react-dates/lib/css/_datepicker.css";
+import { DateRangePicker, OrientationShape, toMomentObject } from "react-dates";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -54,7 +61,29 @@ type EventTypeInput = {
   customInputs: EventTypeCustomInput[];
   timeZone: string;
   availability?: { openingHours: OpeningHours[]; dateOverrides: DateOverride[] };
+  periodType?: string;
+  periodDays?: number;
+  periodStartDate?: Date | string;
+  periodEndDate?: Date | string;
+  periodCountCalendarDays?: boolean;
+  requiresConfirmation: boolean;
+  minimumBookingNotice: number;
 };
+
+const PERIOD_TYPES = [
+  {
+    type: "rolling",
+    suffix: "into the future",
+  },
+  {
+    type: "range",
+    prefix: "Within a date range",
+  },
+  {
+    type: "unlimited",
+    prefix: "Indefinitely into the future",
+  },
+];
 
 export default function EventTypePage({
   user,
@@ -71,6 +100,39 @@ export default function EventTypePage({
     { value: EventTypeCustomInputType.Bool, label: "Checkbox" },
   ];
 
+  const [DATE_PICKER_ORIENTATION, setDatePickerOrientation] = useState<OrientationShape>("horizontal");
+  const [contentSize, setContentSize] = useState({ width: 0, height: 0 });
+
+  const handleResizeEvent = () => {
+    const elementWidth = parseFloat(getComputedStyle(document.body).width);
+    const elementHeight = parseFloat(getComputedStyle(document.body).height);
+
+    setContentSize({
+      width: elementWidth,
+      height: elementHeight,
+    });
+  };
+
+  const throttledHandleResizeEvent = throttle(handleResizeEvent, 100);
+
+  useEffect(() => {
+    handleResizeEvent();
+
+    window.addEventListener("resize", throttledHandleResizeEvent);
+
+    return () => {
+      window.removeEventListener("resize", throttledHandleResizeEvent);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (contentSize.width < 500) {
+      setDatePickerOrientation("vertical");
+    } else {
+      setDatePickerOrientation("horizontal");
+    }
+  }, [contentSize]);
+
   const [enteredAvailability, setEnteredAvailability] = useState();
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showAddCustomModal, setShowAddCustomModal] = useState(false);
@@ -83,12 +145,39 @@ export default function EventTypePage({
     eventType.customInputs.sort((a, b) => a.id - b.id) || []
   );
 
+  const [periodStartDate, setPeriodStartDate] = useState(() => {
+    if (eventType.periodType === "range" && eventType?.periodStartDate) {
+      return toMomentObject(new Date(eventType.periodStartDate));
+    }
+
+    return null;
+  });
+
+  const [periodEndDate, setPeriodEndDate] = useState(() => {
+    if (eventType.periodType === "range" && eventType.periodEndDate) {
+      return toMomentObject(new Date(eventType?.periodEndDate));
+    }
+
+    return null;
+  });
+  const [focusedInput, setFocusedInput] = useState(null);
+  const [periodType, setPeriodType] = useState(() => {
+    return (
+      PERIOD_TYPES.find((s) => s.type === eventType.periodType) ||
+      PERIOD_TYPES.find((s) => s.type === "unlimited")
+    );
+  });
+
   const titleRef = useRef<HTMLInputElement>();
   const slugRef = useRef<HTMLInputElement>();
   const descriptionRef = useRef<HTMLTextAreaElement>();
   const lengthRef = useRef<HTMLInputElement>();
   const isHiddenRef = useRef<HTMLInputElement>();
+  const requiresConfirmationRef = useRef<HTMLInputElement>();
+  const minimumBookingNoticeRef = useRef<HTMLInputElement>();
   const eventNameRef = useRef<HTMLInputElement>();
+  const periodDaysRef = useRef<HTMLInputElement>();
+  const periodDaysTypeRef = useRef<HTMLSelectElement>();
 
   useEffect(() => {
     setSelectedTimeZone(eventType.timeZone || user.timeZone);
@@ -102,7 +191,17 @@ export default function EventTypePage({
     const enteredDescription: string = descriptionRef.current.value;
     const enteredLength: number = parseInt(lengthRef.current.value);
     const enteredIsHidden: boolean = isHiddenRef.current.checked;
+    const enteredMinimumBookingNotice: number = parseInt(minimumBookingNoticeRef.current.value);
+    const enteredRequiresConfirmation: boolean = requiresConfirmationRef.current.checked;
     const enteredEventName: string = eventNameRef.current.value;
+
+    const type = periodType.type;
+    const enteredPeriodDays = parseInt(periodDaysRef?.current?.value);
+    const enteredPeriodDaysType = Boolean(parseInt(periodDaysTypeRef?.current.value));
+
+    const enteredPeriodStartDate = periodStartDate ? periodStartDate.toDate() : null;
+    const enteredPeriodEndDate = periodEndDate ? periodEndDate.toDate() : null;
+
     // TODO: Add validation
 
     const payload: EventTypeInput = {
@@ -116,6 +215,13 @@ export default function EventTypePage({
       eventName: enteredEventName,
       customInputs,
       timeZone: selectedTimeZone,
+      periodType: type,
+      periodDays: enteredPeriodDays,
+      periodStartDate: enteredPeriodStartDate,
+      periodEndDate: enteredPeriodEndDate,
+      periodCountCalendarDays: enteredPeriodDaysType,
+      minimumBookingNotice: enteredMinimumBookingNotice,
+      requiresConfirmation: enteredRequiresConfirmation,
     };
 
     if (enteredAvailability) {
@@ -210,7 +316,7 @@ export default function EventTypePage({
                 name="address"
                 id="address"
                 required
-                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
                 defaultValue={locations.find((location) => location.type === LocationType.InPerson)?.address}
               />
             </div>
@@ -268,8 +374,8 @@ export default function EventTypePage({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Shell heading={"Event Type - " + eventType.title}>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="col-span-3 sm:col-span-2">
+        <div className="max-w-5xl mx-auto">
+          <div className="">
             <div className="bg-white overflow-hidden shadow rounded-lg mb-4">
               <div className="px-4 py-5 sm:p-6">
                 <form onSubmit={updateEventTypeHandler}>
@@ -284,7 +390,7 @@ export default function EventTypePage({
                         name="title"
                         id="title"
                         required
-                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
                         placeholder="Quick Chat"
                         defaultValue={eventType.title}
                       />
@@ -305,7 +411,7 @@ export default function EventTypePage({
                           name="slug"
                           id="slug"
                           required
-                          className="flex-1 block w-full focus:ring-blue-500 focus:border-blue-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+                          className="flex-1 block w-full focus:ring-black focus:border-black min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                           defaultValue={eventType.slug}
                         />
                       </div>
@@ -323,14 +429,15 @@ export default function EventTypePage({
                             id="location"
                             options={locationOptions}
                             isSearchable="false"
-                            className="flex-1 block w-full focus:ring-blue-500 focus:border-blue-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+                            classNamePrefix="react-select"
+                            className="react-select-container rounded-sm border border-gray-300 flex-1 block w-full focus:ring-primary-500 focus:border-primary-500 min-w-0 sm:text-sm"
                             onChange={(e) => openLocationModal(e.value)}
                           />
                         </div>
                       </div>
                     )}
                     {locations.length > 0 && (
-                      <ul className="w-96 mt-1">
+                      <ul className="mt-1">
                         {locations.map((location) => (
                           <li key={location.type} className="bg-blue-50 mb-2 p-2 border">
                             <div className="flex justify-between">
@@ -445,29 +552,9 @@ export default function EventTypePage({
                         ref={descriptionRef}
                         name="description"
                         id="description"
-                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
                         placeholder="A quick video meeting."
                         defaultValue={eventType.description}></textarea>
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <label htmlFor="length" className="block text-sm font-medium text-gray-700">
-                      Length
-                    </label>
-                    <div className="mt-1 relative rounded-md shadow-sm">
-                      <input
-                        ref={lengthRef}
-                        type="number"
-                        name="length"
-                        id="length"
-                        required
-                        className="focus:ring-blue-500 focus:border-blue-500 block w-full pr-20 sm:text-sm border-gray-300 rounded-md"
-                        placeholder="15"
-                        defaultValue={eventType.length}
-                      />
-                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 text-sm">
-                        minutes
-                      </div>
                     </div>
                   </div>
                   <div className="mb-4">
@@ -480,7 +567,7 @@ export default function EventTypePage({
                         type="text"
                         name="title"
                         id="title"
-                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
                         placeholder="Meeting with {USER}"
                         defaultValue={eventType.eventName}
                       />
@@ -540,7 +627,7 @@ export default function EventTypePage({
                           id="ishidden"
                           name="ishidden"
                           type="checkbox"
-                          className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
+                          className="focus:ring-black h-4 w-4 text-blue-600 border-gray-300 rounded"
                           defaultChecked={eventType.hidden}
                         />
                       </div>
@@ -554,29 +641,193 @@ export default function EventTypePage({
                       </div>
                     </div>
                   </div>
-                  <hr className="my-4" />
-                  <div>
-                    <h3 className="mb-2">How do you want to offer your availability for this event type?</h3>
-                    <Scheduler
-                      setAvailability={setEnteredAvailability}
-                      setTimeZone={setSelectedTimeZone}
-                      timeZone={selectedTimeZone}
-                      availability={availability}
-                    />
-                    <div className="py-4 flex justify-end">
-                      <Link href="/availability">
-                        <a className="mr-2 btn btn-white">Cancel</a>
-                      </Link>
-                      <button type="submit" className="btn btn-primary">
-                        Update
-                      </button>
+                  <div className="my-8">
+                    <div className="relative flex items-start">
+                      <div className="flex items-center h-5">
+                        <input
+                          ref={requiresConfirmationRef}
+                          id="requiresConfirmation"
+                          name="requiresConfirmation"
+                          type="checkbox"
+                          className="focus:ring-black h-4 w-4 text-blue-600 border-gray-300 rounded"
+                          defaultChecked={eventType.requiresConfirmation}
+                        />
+                      </div>
+                      <div className="ml-3 text-sm">
+                        <label htmlFor="requiresConfirmation" className="font-medium text-gray-700">
+                          Booking requires manual confirmation
+                        </label>
+                        <p className="text-gray-500">
+                          The booking needs to be confirmed, before it is pushed to the integrations and a
+                          confirmation mail is sent.
+                        </p>
+                      </div>
                     </div>
                   </div>
+
+                  <fieldset className="my-8">
+                    <Text variant="largetitle">When can people book this event?</Text>
+                    <div className="my-4">
+                      <label htmlFor="minimumAdvance" className="block text-sm font-medium text-gray-700">
+                        Minimum booking notice
+                      </label>
+                      <div className="mt-1 relative rounded-md shadow-sm">
+                        <input
+                          ref={minimumBookingNoticeRef}
+                          type="number"
+                          name="minimumAdvance"
+                          id="minimumAdvance"
+                          required
+                          className="focus:ring-black focus:border-black block w-full pr-20 sm:text-sm border-gray-300 rounded-md"
+                          defaultValue={eventType.minimumBookingNotice}
+                        />
+                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 text-sm">
+                          minutes
+                        </div>
+                      </div>
+                    </div>
+                    <hr className="my-8" />
+                    <section className="space-y-12">
+                      <div className="mb-4">
+                        {/* <label htmlFor="period" className=""> */}
+                        <Text variant="subtitle">Date Range</Text>
+                        {/* </label> */}
+                        <Text variant="title3">Invitees can schedule...</Text>
+                        <div className="mt-1 relative ">
+                          <RadioGroup value={periodType} onChange={setPeriodType}>
+                            <RadioGroup.Label className="sr-only">Date Range</RadioGroup.Label>
+                            <div className="bg-white rounded-md -space-y-px">
+                              {PERIOD_TYPES.map((period) => (
+                                <RadioGroup.Option
+                                  key={period.type}
+                                  value={period}
+                                  className={({ checked }) =>
+                                    classnames(
+                                      checked ? "bg-indigo-50 border-indigo-200 z-10" : "border-gray-200",
+                                      "relative py-4 px-2 lg:p-4 min-h-20 lg:flex items-center cursor-pointer focus:outline-none"
+                                    )
+                                  }>
+                                  {({ active, checked }) => (
+                                    <>
+                                      <span
+                                        className={classnames(
+                                          checked
+                                            ? "bg-indigo-600 border-transparent"
+                                            : "bg-white border-gray-300",
+                                          active ? "ring-2 ring-offset-2 ring-indigo-500" : "",
+                                          "h-4 w-4 mt-0.5 cursor-pointer rounded-full border flex items-center justify-center"
+                                        )}
+                                        aria-hidden="true">
+                                        <span className="rounded-full bg-white w-1.5 h-1.5" />
+                                      </span>
+                                      <div className="lg:ml-3 flex flex-col">
+                                        <RadioGroup.Label
+                                          as="span"
+                                          className={classnames(
+                                            checked ? "text-indigo-900" : "text-gray-900",
+                                            "block text-sm font-light space-y-2 lg:space-y-0 lg:space-x-2"
+                                          )}>
+                                          <span>{period.prefix}</span>
+                                          {period.type === "rolling" && (
+                                            <div className="inline-flex">
+                                              <input
+                                                ref={periodDaysRef}
+                                                type="text"
+                                                name="periodDays"
+                                                id=""
+                                                className="shadow-sm focus:ring-black focus:border-indigo-500 block w-12 sm:text-sm border-gray-300 rounded-md"
+                                                placeholder="30"
+                                                defaultValue={eventType.periodDays || 30}
+                                              />
+                                              <select
+                                                ref={periodDaysTypeRef}
+                                                id=""
+                                                name="periodDaysType"
+                                                className=" block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-black focus:border-indigo-500 sm:text-sm rounded-md"
+                                                defaultValue={eventType.periodCountCalendarDays ? "1" : "0"}>
+                                                <option value="1">calendar days</option>
+                                                <option value="0">business days</option>
+                                              </select>
+                                            </div>
+                                          )}
+
+                                          {checked && period.type === "range" && (
+                                            <div className="inline-flex space-x-2">
+                                              <DateRangePicker
+                                                orientation={DATE_PICKER_ORIENTATION}
+                                                startDate={periodStartDate}
+                                                startDateId="your_unique_start_date_id"
+                                                endDate={periodEndDate}
+                                                endDateId="your_unique_end_date_id"
+                                                onDatesChange={({ startDate, endDate }) => {
+                                                  setPeriodStartDate(startDate);
+                                                  setPeriodEndDate(endDate);
+                                                }}
+                                                focusedInput={focusedInput}
+                                                onFocusChange={(focusedInput) => {
+                                                  setFocusedInput(focusedInput);
+                                                }}
+                                              />
+                                            </div>
+                                          )}
+
+                                          <span>{period.suffix}</span>
+                                        </RadioGroup.Label>
+                                      </div>
+                                    </>
+                                  )}
+                                </RadioGroup.Option>
+                              ))}
+                            </div>
+                          </RadioGroup>
+                        </div>
+                      </div>
+                      <hr className="my-8" />
+                      <div className="mb-4">
+                        <label htmlFor="length" className="block text-sm font-medium text-gray-700">
+                          <Text variant="caption">Duration</Text>
+                        </label>
+                        <div className="mt-1 relative rounded-md shadow-sm">
+                          <input
+                            ref={lengthRef}
+                            type="number"
+                            name="length"
+                            id="length"
+                            required
+                            className="focus:ring-black focus:border-black block w-full pr-20 sm:text-sm border-gray-300 rounded-md"
+                            placeholder="15"
+                            defaultValue={eventType.length}
+                          />
+                          <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 text-sm">
+                            minutes
+                          </div>
+                        </div>
+                      </div>
+                      <hr className="my-8" />
+                      <div>
+                        <h3 className="mb-2">
+                          How do you want to offer your availability for this event type?
+                        </h3>
+                        <Scheduler
+                          setAvailability={setEnteredAvailability}
+                          setTimeZone={setSelectedTimeZone}
+                          timeZone={selectedTimeZone}
+                          availability={availability}
+                        />
+                        <div className="py-4 flex justify-end">
+                          <Link href="/availability">
+                            <a className="mr-2 btn btn-white">Cancel</a>
+                          </Link>
+                          <button type="submit" className="btn btn-primary">
+                            Update
+                          </button>
+                        </div>
+                      </div>
+                    </section>
+                  </fieldset>
                 </form>
               </div>
             </div>
-          </div>
-          <div>
             <div className="bg-white shadow sm:rounded-lg">
               <div className="px-4 py-5 sm:p-6">
                 <h3 className="text-lg mb-2 leading-6 font-medium text-gray-900">Delete this event type</h3>
@@ -597,13 +848,13 @@ export default function EventTypePage({
         </div>
         {showLocationModal && (
           <div
-            className="fixed z-10 inset-0 overflow-y-auto"
+            className="fixed z-50 inset-0 overflow-y-auto"
             aria-labelledby="modal-title"
             role="dialog"
             aria-modal="true">
             <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
               <div
-                className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                className="fixed inset-0 bg-gray-500 z-0 bg-opacity-75 transition-opacity"
                 aria-hidden="true"></div>
 
               <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
@@ -613,7 +864,7 @@ export default function EventTypePage({
               <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
                 <div className="sm:flex sm:items-start mb-4">
                   <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
-                    <LocationMarkerIcon className="h-6 w-6 text-blue-600" />
+                    <LocationMarkerIcon className="h-6 w-6 text-black" />
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                     <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
@@ -627,7 +878,7 @@ export default function EventTypePage({
                     defaultValue={selectedLocation}
                     options={locationOptions}
                     isSearchable="false"
-                    className="mb-2 flex-1 block w-full focus:ring-blue-500 focus:border-blue-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+                    className="mb-2 flex-1 block w-full focus:ring-black focus:border-black min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                     onChange={setSelectedLocation}
                   />
                   <LocationOptions />
@@ -646,13 +897,13 @@ export default function EventTypePage({
         )}
         {showAddCustomModal && (
           <div
-            className="fixed z-10 inset-0 overflow-y-auto"
+            className="fixed z-50 inset-0 overflow-y-auto"
             aria-labelledby="modal-title"
             role="dialog"
             aria-modal="true">
             <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
               <div
-                className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                className="fixed inset-0 bg-gray-500 z-0 bg-opacity-75 transition-opacity"
                 aria-hidden="true"
               />
 
@@ -663,7 +914,7 @@ export default function EventTypePage({
               <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
                 <div className="sm:flex sm:items-start mb-4">
                   <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
-                    <PlusIcon className="h-6 w-6 text-blue-600" />
+                    <PlusIcon className="h-6 w-6 text-black" />
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                     <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
@@ -687,7 +938,7 @@ export default function EventTypePage({
                       options={inputOptions}
                       isSearchable="false"
                       required
-                      className="mb-2 flex-1 block w-full focus:ring-blue-500 focus:border-blue-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300 mt-1"
+                      className="react-select-container border border-gray-300 rounded-sm  mb-2 flex-1 block w-full focus:ring-black focus:border-black min-w-0 sm:text-sm mt-1"
                       onChange={setSelectedInputOption}
                     />
                   </div>
@@ -701,7 +952,7 @@ export default function EventTypePage({
                         name="label"
                         id="label"
                         required
-                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
                         defaultValue={selectedCustomInput?.label}
                       />
                     </div>
@@ -711,7 +962,7 @@ export default function EventTypePage({
                       id="required"
                       name="required"
                       type="checkbox"
-                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded mr-2"
+                      className="focus:ring-black h-4 w-4 text-blue-600 border-gray-300 rounded mr-2"
                       defaultChecked={selectedCustomInput?.required ?? true}
                     />
                     <label htmlFor="required" className="block text-sm font-medium text-gray-700">
@@ -777,6 +1028,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ req, query
       availability: true,
       customInputs: true,
       timeZone: true,
+      periodType: true,
+      periodDays: true,
+      periodStartDate: true,
+      periodEndDate: true,
+      periodCountCalendarDays: true,
+      requiresConfirmation: true,
+      minimumBookingNotice: true,
     },
   });
 
@@ -803,7 +1061,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ req, query
       enabled: credentials.find((integration) => integration.type === "google_calendar") != null,
       type: "google_calendar",
       title: "Google Calendar",
-      imageSrc: "integrations/google-calendar.png",
+      imageSrc: "integrations/google-calendar.svg",
       description: "For personal and business accounts",
     },
     {
@@ -811,7 +1069,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ req, query
       type: "office365_calendar",
       enabled: credentials.find((integration) => integration.type === "office365_calendar") != null,
       title: "Office 365 / Outlook.com Calendar",
-      imageSrc: "integrations/office-365.png",
+      imageSrc: "integrations/outlook.svg",
       description: "For personal and business accounts",
     },
   ];
@@ -853,10 +1111,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ req, query
 
   availability.sort((a, b) => a.startTime - b.startTime);
 
+  const eventTypeObject = Object.assign({}, eventType, {
+    periodStartDate: eventType.periodStartDate?.toString() ?? null,
+    periodEndDate: eventType.periodEndDate?.toString() ?? null,
+  });
+
   return {
     props: {
       user,
-      eventType,
+      eventType: eventTypeObject,
       locationOptions,
       availability,
     },

@@ -25,6 +25,13 @@ model EventType {
   eventName     String?
   customInputs  EventTypeCustomInput[]
   timeZone      String?
+  periodType String? @default("unlimited") // unlimited | rolling | range
+  periodStartDate DateTime?
+  periodEndDate DateTime?
+  periodDays Int?
+  periodCountCalendarDays Boolean?
+  requiresConfirmation Boolean @default(false)
+  minimumBookingNotice Int @default(120)
 }
 
 model Credential {
@@ -126,9 +133,12 @@ model Booking {
   endTime       DateTime
 
   attendees     Attendee[]
+  location      String?
 
   createdAt     DateTime    @default(now())
   updatedAt     DateTime?
+  confirmed     Boolean @default(true)
+  rejected      Boolean @default(false)
 }
 
 model Availability {
@@ -167,4 +177,16 @@ model ResetPasswordRequest {
   updatedAt  DateTime @updatedAt
   email      String
   expires    DateTime
+}
+
+enum ReminderType {
+  PENDING_BOOKING_CONFIRMATION
+}
+
+model ReminderMail {
+  id             Int      @id @default(autoincrement())
+  referenceId    Int
+  reminderType   ReminderType
+  elapsedMinutes Int
+  createdAt      DateTime @default(now())
 }
