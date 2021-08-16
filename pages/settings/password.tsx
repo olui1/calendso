@@ -41,7 +41,8 @@ export default function Settings() {
     });
     /*eslint-enable */
 
-  
+    setSuccessModalOpen(true);
+  }
 
   return (
     <Shell heading="Password" subtitle="Change the password that you use to sign in to your account.">
