@@ -1,26 +1,21 @@
-import {useState} from 'react';
-import Head from 'next/head';
-import prisma from '../../lib/prisma';
-import {useRouter} from 'next/router';
-import dayjs from 'dayjs';
-import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import isBetween from 'dayjs/plugin/isBetween';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-import {CheckIcon} from "@heroicons/react/outline";
+import Head from "next/head";
+import prisma from "../../lib/prisma";
+import { useRouter } from "next/router";
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isBetween from "dayjs/plugin/isBetween";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import { CheckIcon } from "@heroicons/react/outline";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isBetween);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-function classNames(...classes) {
-    return classes.filter(Boolean).join(' ')
-}
-
 export default function Type(props) {
-    // Get router variables
-    const router = useRouter();
+  // Get router variables
+  const router = useRouter();
 
     const [is24h, setIs24h] = useState(false);
 
@@ -73,30 +68,41 @@ export default function Type(props) {
                             </div>
                         </div>
                     </div>
+                  </div>
+                
+                <div className="mt-5 sm:mt-6 text-center">
+                  <div className="mt-5">
+                    <button
+                      onClick={() => router.push("/" + props.user.username)}
+                      type="button"
+                      className="inline-flex items-center justify-center px-4 py-2 border border-transparent font-medium rounded-md text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:text-sm mx-2 btn-white">
+                      Pick another
+                    </button>
+                  </div>
                 </div>
-            </main>
-        </div>
-    );
+      </main>
+    </div>
+  );
 }
 
 export async function getServerSideProps(context) {
-    const user = await prisma.user.findFirst({
-        where: {
-            username: context.query.user,
-        },
-        select: {
-            username: true,
-            name: true,
-            bio: true,
-            avatar: true,
-            eventTypes: true
-        }
-    });
+  const user = await prisma.user.findFirst({
+    where: {
+      username: context.query.user,
+    },
+    select: {
+      username: true,
+      name: true,
+      bio: true,
+      avatar: true,
+      eventTypes: true,
+    },
+  });
 
-    return {
-        props: {
-            user,
-            title: context.query.title
-        },
-    }
+  return {
+    props: {
+      user,
+      title: context.query.title,
+    },
+  };
 }

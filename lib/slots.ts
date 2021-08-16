@@ -1,7 +1,6 @@
 import dayjs, { Dayjs } from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -119,8 +118,15 @@ const getSlots = ({
   workingHours,
   organizerTimeZone,
 }: GetSlots): Dayjs[] => {
-  const startTime = dayjs().utcOffset(inviteeDate.utcOffset()).isSame(inviteeDate, "day")
-    ? inviteeDate.hour() * 60 + inviteeDate.minute() + (minimumBookingNotice || 0)
+  // current date in invitee tz
+  const currentDate = dayjs().utcOffset(inviteeDate.utcOffset());
+  const startDate = currentDate.add(minimumBookingNotice, "minutes"); // + minimum notice period
+
+  const startTime = startDate.isAfter(inviteeDate)
+    ? // block out everything when inviteeDate is less than startDate
+      startDate.diff(inviteeDate, "day") > 0
+      ? 1440
+      : startDate.hour() * 60 + startDate.minute()
     : 0;
 
   const inviteeBounds = inviteeBoundary(startTime, inviteeDate.utcOffset(), frequency);
