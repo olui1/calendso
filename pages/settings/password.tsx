@@ -40,7 +40,8 @@ export default function Settings() {
       },
     });
     /*eslint-enable */
-
+    setSuccessModalOpen(true);
+  }
   
 
   return (
