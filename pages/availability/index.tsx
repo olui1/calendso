@@ -116,7 +116,7 @@ export default function Availability(props) {
   return (
     <div>
       <Head>
-        <title>Availability | Calendso</title>
+        <title>Availability | Heralds</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Shell
@@ -171,18 +171,6 @@ export default function Availability(props) {
                 className="fixed inset-0 bg-gray-500 z-0 bg-opacity-75 transition-opacity"
                 aria-hidden="true"></div>
 
-<<<<<<< HEAD
-    return(
-        <div>
-            <Head>
-                <title>Availability | Heralds</title>
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-            <Shell heading="Availability">
-                <div className="mb-4 sm:flex sm:items-center sm:justify-between">
-                    <h3 className="text-lg leading-6 font-medium text-white">
-                        Event Types
-=======
               <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
                 &#8203;
               </span>
@@ -195,7 +183,6 @@ export default function Availability(props) {
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                     <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
                       Change your available times
->>>>>>> main
                     </h3>
                     <div>
                       <p className="text-sm text-gray-500">

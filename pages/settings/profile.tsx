@@ -23,7 +23,7 @@ export default function Settings(props) {
   const nameRef = useRef<HTMLInputElement>();
   const descriptionRef = useRef<HTMLTextAreaElement>();
   const avatarRef = useRef<HTMLInputElement>();
-  const hideBrandingRef = useRef<HTMLInputElement>();
+  // const hideBrandingRef = useRef<HTMLInputElement>();
   const [selectedTheme, setSelectedTheme] = useState({ value: props.user.theme });
   const [selectedTimeZone, setSelectedTimeZone] = useState({ value: props.user.timeZone });
   const [selectedWeekStartDay, setSelectedWeekStartDay] = useState({ value: props.user.weekStart });
@@ -58,7 +58,7 @@ export default function Settings(props) {
     const enteredAvatar = avatarRef.current.value;
     const enteredTimeZone = selectedTimeZone.value;
     const enteredWeekStartDay = selectedWeekStartDay.value;
-    const enteredHideBranding = hideBrandingRef.current.checked;
+    // const enteredHideBranding = hideBrandingRef.current.checked;
 
     // TODO: Add validation
 
@@ -71,7 +71,7 @@ export default function Settings(props) {
         avatar: enteredAvatar,
         timeZone: enteredTimeZone,
         weekStart: enteredWeekStartDay,
-        hideBranding: enteredHideBranding,
+        // hideBranding: enteredHideBranding,
         theme: selectedTheme ? selectedTheme.value : null,
       }),
       headers: {
@@ -308,7 +308,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     {
       id: session.user.id,
     },
-    ["id", "username", "name", "email", "bio", "avatar", "timeZone", "weekStart", "hideBranding", "theme"]
+    ["id", "username", "name", "email", "bio", "avatar", "timeZone", "weekStart", "theme"]
   );
 
   return {

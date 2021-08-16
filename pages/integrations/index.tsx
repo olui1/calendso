@@ -163,7 +163,7 @@ export default function IntegrationHome({ integrations }) {
   return (
     <div>
       <Head>
-        <title>App Store | Calendso</title>
+        <title>App Store | Heralds</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

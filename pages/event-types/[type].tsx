@@ -323,12 +323,12 @@ export default function EventTypePage({
         );
       case LocationType.Phone:
         return (
-          <p className="text-sm">Calendso will ask your invitee to enter a phone number before scheduling.</p>
+          <p className="text-sm">Heralds will ask your invitee to enter a phone number before scheduling.</p>
         );
       case LocationType.GoogleMeet:
-        return <p className="text-sm">Calendso will provide a Google Meet location.</p>;
+        return <p className="text-sm">Heralds will provide a Google Meet location.</p>;
       case LocationType.Zoom:
-        return <p className="text-sm">Calendso will provide a Zoom meeting URL.</p>;
+        return <p className="text-sm">Heralds will provide a Zoom meeting URL.</p>;
     }
     return null;
   };
@@ -369,7 +369,7 @@ export default function EventTypePage({
   return (
     <div>
       <Head>
-        <title>{eventType.title} | Event Type | Calendso</title>
+        <title>{eventType.title} | Event Type | Heralds</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Shell

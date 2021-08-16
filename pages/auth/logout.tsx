@@ -10,7 +10,7 @@ export default function Logout() {
       role="dialog"
       aria-modal="true">
       <Head>
-        <title>Logged out - Calendso</title>
+        <title>Logged out - Heralds</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">

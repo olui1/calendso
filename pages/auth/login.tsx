@@ -10,7 +10,7 @@ export default function Login({ csrfToken }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <img className="h-6 mx-auto" src="/calendso-logo-white-word.svg" alt="Calendso Logo" />
+        <img className="h-6 mx-auto" src="/heralds-logo-word.svg" alt="Heralds Logo" />
         <h2 className="mt-6 text-center text-3xl font-bold text-neutral-900">Sign in to your account</h2>
       </div>
 

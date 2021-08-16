@@ -247,7 +247,7 @@ function UserDropdown({ session, small, bottom }: { session: any; small?: boolea
                 </a>
               </div>
               <div className="py-1">
-                <Menu.Item>
+                {/* <Menu.Item>
                   {({ active }) => (
                     <a
                       href="https://calendso.com/slack"
@@ -282,7 +282,7 @@ function UserDropdown({ session, small, bottom }: { session: any; small?: boolea
                       Join our Slack
                     </a>
                   )}
-                </Menu.Item>
+                </Menu.Item> */}
                 <Menu.Item>
                   {({ active }) => (
                     <a

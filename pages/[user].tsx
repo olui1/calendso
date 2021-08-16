@@ -54,14 +54,14 @@ export default function User(props): User {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <meta name="title" content={"Meet " + (props.user.name || props.user.username) + " via Calendso"} />
+        <meta name="title" content={"Meet " + (props.user.name || props.user.username) + " via Heralds"} />
         <meta name="description" content={"Book a time with " + (props.user.name || props.user.username)} />
 
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://calendso/" />
+        <meta property="og:url" content="https://heralds.io/" />
         <meta
           property="og:title"
-          content={"Meet " + (props.user.name || props.user.username) + " via Calendso"}
+          content={"Meet " + (props.user.name || props.user.username) + " via Heralds"}
         />
         <meta
           property="og:description"
@@ -75,16 +75,16 @@ export default function User(props): User {
               /'/g,
               "%27"
             ) +
-            ".png?md=1&images=https%3A%2F%2Fcalendso.com%2Fcalendso-logo-white.svg&images=" +
+            "heralds-logo-word.svg" +
             encodeURIComponent(props.user.avatar)
           }
         />
 
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://calendso/" />
+        <meta property="twitter:url" content="https://heralds.io/" />
         <meta
           property="twitter:title"
-          content={"Meet " + (props.user.name || props.user.username) + " via Calendso"}
+          content={"Meet " + (props.user.name || props.user.username) + " via Heralds"}
         />
         <meta
           property="twitter:description"
@@ -98,7 +98,7 @@ export default function User(props): User {
               /'/g,
               "%27"
             ) +
-            ".png?md=1&images=https%3A%2F%2Fcalendso.com%2Fcalendso-logo-white.svg&images=" +
+            "heralds-logo-word.svg" +
             encodeURIComponent(props.user.avatar)
           }
         />

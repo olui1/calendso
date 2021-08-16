@@ -101,7 +101,7 @@ export default function Type(props): Type {
             encodeURIComponent(
               "Meet **" + (props.user.name || props.user.username) + "** <br>" + props.eventType.description
             ).replace(/'/g, "%27") +
-            ".png?md=1&images=https%3A%2F%2Fcalendso.com%2Fcalendso-logo-white.svg&images=" +
+            "heralds-logo-word.svg" +
             encodeURIComponent(props.user.avatar)
           }
         />
@@ -120,7 +120,7 @@ export default function Type(props): Type {
             encodeURIComponent(
               "Meet **" + (props.user.name || props.user.username) + "** <br>" + props.eventType.description
             ).replace(/'/g, "%27") +
-            ".png?md=1&images=https%3A%2F%2Fcalendso.com%2Fcalendso-logo-white.svg&images=" +
+            "heralds-logo-word.svg" +
             encodeURIComponent(props.user.avatar)
           }
         />

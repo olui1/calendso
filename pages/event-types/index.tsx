@@ -169,7 +169,7 @@ export default function Availability({ user, types }) {
   return (
     <div>
       <Head>
-        <title>Event Types | Calendso</title>
+        <title>Event Types | Heralds</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Shell
