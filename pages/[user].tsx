@@ -47,12 +47,10 @@ export default function User(props): User {
     </div>
   ));
   return (
-    isReady && (
-      <div>
-        <Head>
-          <title>{props.user.name || props.user.username} | Heralds</title>
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
+    <>
+      <Head>
+        <title>{props.user.name || props.user.username} | Heralds</title>
+        <link rel="icon" href="/favicon.ico" />
 
         <meta name="title" content={"Meet " + (props.user.name || props.user.username) + " via Heralds"} />
         <meta name="description" content={"Book a time with " + (props.user.name || props.user.username)} />
@@ -75,13 +73,13 @@ export default function User(props): User {
               /'/g,
               "%27"
             ) +
-            "heralds-logo-word.svg" +
+            ".png?md=1&images=https%3A%2F%2Fcalendso.com%2Fcalendso-logo-white.svg&images=" +
             encodeURIComponent(props.user.avatar)
           }
         />
 
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://heralds.io/" />
+        <meta property="twitter:url" content="https://calendso/" />
         <meta
           property="twitter:title"
           content={"Meet " + (props.user.name || props.user.username) + " via Heralds"}
@@ -98,7 +96,7 @@ export default function User(props): User {
               /'/g,
               "%27"
             ) +
-            "heralds-logo-word.svg" +
+            ".png?md=1&images=https%3A%2F%2Fcalendso.com%2Fcalendso-logo-white.svg&images=" +
             encodeURIComponent(props.user.avatar)
           }
         />
