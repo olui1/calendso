@@ -30,9 +30,9 @@ import { Availability, EventType, User } from "@prisma/client";
 import { validJson } from "@lib/jsonUtils";
 import classnames from "classnames";
 import throttle from "lodash.throttle";
-// import "react-dates/initialize";
-// import "react-dates/lib/css/_datepicker.css";
-// import { DateRangePicker, OrientationShape, toMomentObject } from "react-dates";
+import "react-dates/initialize";
+import "react-dates/lib/css/_datepicker.css";
+import { DateRangePicker, OrientationShape, toMomentObject } from "react-dates";
 import Switch from "@components/ui/Switch";
 import { Dialog, DialogTrigger } from "@components/Dialog";
 import ConfirmationDialogContent from "@components/dialog/ConfirmationDialogContent";
@@ -112,7 +112,7 @@ export default function EventTypePage({
     { value: EventTypeCustomInputType.BOOL, label: "Checkbox" },
   ];
 
-  // const [DATE_PICKER_ORIENTATION, setDatePickerOrientation] = useState<OrientationShape>("horizontal");
+  const [DATE_PICKER_ORIENTATION, setDatePickerOrientation] = useState<OrientationShape>("horizontal");
   const [contentSize, setContentSize] = useState({ width: 0, height: 0 });
 
   const handleResizeEvent = () => {
@@ -137,13 +137,13 @@ export default function EventTypePage({
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (contentSize.width < 500) {
-  //     setDatePickerOrientation("vertical");
-  //   } else {
-  //     setDatePickerOrientation("horizontal");
-  //   }
-  // }, [contentSize]);
+  useEffect(() => {
+    if (contentSize.width < 500) {
+      setDatePickerOrientation("vertical");
+    } else {
+      setDatePickerOrientation("horizontal");
+    }
+  }, [contentSize]);
 
   const [enteredAvailability, setEnteredAvailability] = useState();
   const [showLocationModal, setShowLocationModal] = useState(false);
@@ -157,21 +157,21 @@ export default function EventTypePage({
     eventType.customInputs.sort((a, b) => a.id - b.id) || []
   );
 
-  // const [periodStartDate, setPeriodStartDate] = useState(() => {
-  //   if (eventType.periodType === "range" && eventType?.periodStartDate) {
-  //     return toMomentObject(new Date(eventType.periodStartDate));
-  //   }
+  const [periodStartDate, setPeriodStartDate] = useState(() => {
+    if (eventType.periodType === "range" && eventType?.periodStartDate) {
+      return toMomentObject(new Date(eventType.periodStartDate));
+    }
 
-  //   return null;
-  // });
+    return null;
+  });
 
-  // const [periodEndDate, setPeriodEndDate] = useState(() => {
-  //   if (eventType.periodType === "range" && eventType.periodEndDate) {
-  //     return toMomentObject(new Date(eventType?.periodEndDate));
-  //   }
+  const [periodEndDate, setPeriodEndDate] = useState(() => {
+    if (eventType.periodType === "range" && eventType.periodEndDate) {
+      return toMomentObject(new Date(eventType?.periodEndDate));
+    }
 
-  //   return null;
-  // });
+    return null;
+  });
   const [focusedInput, setFocusedInput] = useState(null);
   const [periodType, setPeriodType] = useState(() => {
     return (
@@ -775,7 +775,7 @@ export default function EventTypePage({
 
                                             {checked && period.type === "range" && (
                                               <div className="inline-flex space-x-2">
-                                                {/* <DateRangePicker
+                                                <DateRangePicker
                                                   orientation={DATE_PICKER_ORIENTATION}
                                                   startDate={periodStartDate}
                                                   startDateId="your_unique_start_date_id"
@@ -789,7 +789,7 @@ export default function EventTypePage({
                                                   onFocusChange={(focusedInput) => {
                                                     setFocusedInput(focusedInput);
                                                   }}
-                                                /> */}
+                                                />
                                               </div>
                                             )}
 
