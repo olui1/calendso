@@ -8,7 +8,7 @@ import SettingsShell from "../../components/Settings";
 import Avatar from "../../components/Avatar";
 import { getSession } from "next-auth/client";
 import Select from "react-select";
-import TimezoneSelect from "react-timezone-select";
+import TimezoneSelect, { i18nTimezones } from "react-timezone-select";
 import { UsernameInput } from "../../components/ui/UsernameInput";
 import ErrorAlert from "../../components/ui/alerts/Error";
 import ImageUploader from "../../components/ImageUploader";
@@ -186,6 +186,10 @@ export default function Settings(props) {
                       id="timeZone"
                       value={selectedTimeZone}
                       onChange={setSelectedTimeZone}
+                      timezones={{
+                        ...i18nTimezones,
+                        'Asia/Manila': 'Manila'
+                      }}
                       classNamePrefix="react-select"
                       className="react-select-container border border-gray-300 rounded-sm shadow-sm focus:ring-neutral-500 focus:border-neutral-500 mt-1 block w-full sm:text-sm"
                     />
